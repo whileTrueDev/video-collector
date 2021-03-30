@@ -68,7 +68,7 @@ def get_broad_url():
         'client_id' : "e515195dfe0c6cf7eb2e7bfe05ab582e",
         'select_key': 'cate',
         'select_value' : '00040019',
-        # 'order_type': 'broad_start',
+        'order_type': 'broad_start',
         'page_no': 1
     }
 
