@@ -2,5 +2,7 @@ __pycache__
 .vscode
 .DS_Store
 lib
-videos
+videos/*
+frames
 .env
+save_frames/*
