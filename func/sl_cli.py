@@ -51,7 +51,7 @@ def check_file_output(filename, force):
     return FileOutput(filename)
 
 
-# 실제 비디오가 출력되는 영역
+# video streamming section
 def create_output(plugin):
     """Decides where to write the stream.
 
@@ -264,8 +264,10 @@ def get_video(argments):
     url = None
     if platform == 'afreeca':
         url = 'http://play.afreecatv.com/' +  user_id + '/' + broad_no
+        stream_name = 'hd'
     else :
         url = 'https://www.twitch.tv/' +  user_id 
+        stream_name = '720p60'
 
     file_name = './videos/video_{}_{}'.format(user_id, broad_no)      
     arg_output = file_name
@@ -294,7 +296,6 @@ def get_video(argments):
         print(f"Found matching plugin {plugin.module} for URL {arg_url}")
         streams = plugin.streams()
 
-        stream_name = 'hd'
         if stream_name in streams:
             lock.acquire()
             if not user_id in broad_list.keys():

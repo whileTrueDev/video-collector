@@ -21,7 +21,7 @@ class AfreecaBroad:
             'client_id' : self.CLIENT_ID,
             'select_key': 'cate',
             'select_value' : '00040019',
-            'order_type': 'broad_start',
+            # 'order_type': 'broad_start', 
             'page_no': 1
         }
 

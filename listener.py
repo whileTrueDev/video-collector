@@ -8,14 +8,14 @@ address = ('localhost', 6309)     # family is deduced to be 'AF_INET'
 
 def broad_update(lock, new_broad_list, now_broad_list):
     now_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
-    print('[{}] broadcasting : {}'.format(now_date, now_broad_list))
+    print('[{}] broadcasting : {}'.format(now_date, now_broad_list.keys()))
     new_broads = []
     
     # async - await
     for platform, user_id, broad_no in new_broad_list:
         
         # new broad check
-        if not user_id in now_broad_list:
+        if not user_id in now_broad_list.keys():
             new_broads.append((platform, user_id, broad_no, lock, now_broad_list))
 
     return new_broads
