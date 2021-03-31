@@ -12,12 +12,12 @@ def broad_update(lock, new_broad_list, now_broad_list):
     new_broads = []
     
     # async - await
-    for user_id, broad_no in new_broad_list:
+    for platform, user_id, broad_no in new_broad_list:
         
         # new broad check
         if not user_id in now_broad_list:
-            new_broads.append((user_id, broad_no, lock, now_broad_list))
-            
+            new_broads.append((platform, user_id, broad_no, lock, now_broad_list))
+
     return new_broads
     
 
@@ -31,7 +31,6 @@ if __name__ == '__main__':
         with Pool(processes=cpu_count()-1) as pool:
             # signal listener
             with Listener(address, authkey=b'onad') as listener:
-                print(listener.address)
                 # infinity process
                 while True:
                     try:

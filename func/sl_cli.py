@@ -254,13 +254,18 @@ def setup_plugin_options(session, plugin):
 
 
 def get_video(argments):
-    user_id, broad_no, lock, broad_list = argments
+    platform, user_id, broad_no, lock, broad_list = argments
     global arg_url
     global arg_player 
     global arg_output
     error_code = 0
+    
+    url = None
+    if platform == 'afreeca':
+        url = 'http://play.afreecatv.com/' +  user_id + '/' + broad_no
+    else :
+        url = 'https://www.twitch.tv/' +  user_id 
 
-    url = 'http://play.afreecatv.com/' +  user_id + '/' + broad_no
     file_name = './videos/video_{}_{}'.format(user_id, broad_no)      
     arg_output = file_name
     arg_url = url
@@ -299,7 +304,6 @@ def get_video(argments):
         # Close output
         if output:
             output.close()
-        print("Interrupted! Exiting...")
         error_code = 130
     finally:
         if stream_fd:
@@ -314,8 +318,9 @@ def get_video(argments):
                 lock.release()
 
             except KeyboardInterrupt:
+                  if output:
+                    output.close()
                 error_code = 130
-        
         else:
             # Close output
             if output:
