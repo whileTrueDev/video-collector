@@ -58,15 +58,15 @@ class AfreecaBroad:
         for broad in broad_list:
             broad_time_text = broad.get('broad_start')
             user_id = broad.get('user_id')
-            broad_time = datetime.strptime(broad_time_text, '%Y-%m-%d %H:%M:%S')
-            if(broad_time >= boundary_time):
+            # broad_time = datetime.strptime(broad_time_text, '%Y-%m-%d %H:%M:%S')
+            # if(broad_time >= boundary_time):
                 
-                # target creator check
-                if(user_id in afreeca_target):
-                    target_broads.append(('afreeca', broad['user_id'], broad['broad_no']))
+            # target creator check
+            if(user_id in afreeca_target):
+                target_broads.append(('afreeca', broad['user_id'], broad['broad_no']))
                 
-            else: 
-                # time over
-                break
+            # else: 
+            #     # time over
+            #     break
 
         return target_broads

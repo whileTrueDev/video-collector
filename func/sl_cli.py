@@ -14,11 +14,10 @@ from itertools import chain
 from time import sleep
 
 import requests
-from socks import __version__ as socks_version
-from websocket import __version__ as websocket_version
-
 import streamlink.logger as logger
-from streamlink import NoPluginError, PluginError, StreamError, Streamlink, __version__ as streamlink_version
+from socks import __version__ as socks_version
+from streamlink import NoPluginError, PluginError, StreamError, Streamlink
+from streamlink import __version__ as streamlink_version
 from streamlink.cache import Cache
 from streamlink.exceptions import FatalPluginError
 from streamlink.plugin import PluginOptions
@@ -27,9 +26,11 @@ from streamlink.utils import LazyFormatter, NamedPipe
 from streamlink_cli.argparser import build_parser
 from streamlink_cli.compat import is_win32, stdout
 from streamlink_cli.console import ConsoleOutput, ConsoleUserInputRequester
-from streamlink_cli.constants import CONFIG_FILES, DEFAULT_STREAM_METADATA, PLUGINS_DIR, STREAM_SYNONYMS
+from streamlink_cli.constants import (CONFIG_FILES, DEFAULT_STREAM_METADATA,
+                                      PLUGINS_DIR, STREAM_SYNONYMS)
 from streamlink_cli.output import FileOutput, PlayerOutput
 from streamlink_cli.utils import HTTPServer, ignored, progress, stream_to_url
+from websocket import __version__ as websocket_version
 
 ACCEPTABLE_ERRNO = (errno.EPIPE, errno.EINVAL, errno.ECONNRESET)
 try:
@@ -318,7 +319,7 @@ def get_video(argments):
                 lock.release()
 
             except KeyboardInterrupt:
-                  if output:
+                if output:
                     output.close()
                 error_code = 130
         else:
