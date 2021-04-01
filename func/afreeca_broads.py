@@ -1,4 +1,5 @@
 import requests 
+from requests import exceptions
 import json
 from datetime import datetime, timedelta
 
@@ -25,8 +26,14 @@ class AfreecaBroad:
             'page_no': 1
         }
 
-        response = requests.get(self.URL, params= params, headers= headers)
-        result = json.loads(response.text)
+        try:
+            response = requests.get(self.URL, params= params, headers= headers)
+            result = json.loads(response.text)
+        
+        # connection error handling
+        except exceptions.ConnectionError :
+            print('afreeca api error') 
+            return []
 
         boundary_time = datetime.now() - timedelta(minutes=self.COLLECT_PERIOD)
         # error handling

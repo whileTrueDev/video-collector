@@ -303,9 +303,6 @@ def get_video(argments):
             lock.release()
             handle_stream(plugin, streams, stream_name)
     except KeyboardInterrupt:
-        # Close output
-        if output:
-            output.close()
         error_code = 130
     finally:
         if stream_fd:
@@ -313,22 +310,13 @@ def get_video(argments):
                 print("Closing currently open stream...")
                 log.info("Closing currently open stream...")
                 stream_fd.close()
-                ############ broad_list update section ############
-                lock.acquire()
-                if user_id in broad_list.keys():
-                    broad_list.pop(user_id)
-                lock.release()
-
             except KeyboardInterrupt:
+                error_code = 130
+                 # Close output
                 if output:
                     output.close()
-                error_code = 130
-        else:
-            # Close output
-            if output:
-                output.close()
-            ############ broad_list update section ############
-            lock.acquire()
-            if user_id in broad_list.keys():
-                broad_list.pop(user_id)
-            lock.release()
+        ############ broad_list update section ############
+        lock.acquire()
+        if user_id in broad_list.keys():
+            broad_list.pop(user_id)
+        lock.release()
