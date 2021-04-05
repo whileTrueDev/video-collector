@@ -4,19 +4,21 @@ import cv2
 import time
 import os
 
-user_dict = {
-    'joni': '',
-    'june': '',
-    'luke': '',
-    'mbaku': '',
-    'martini': '',
-    'robert': '',
-    'scott': '',
-    'woodie': '',
-    'wony': '',
-    'jiny': '',
-    'simon': 'video_axiaxi_232068313'
-}
+def select_file():
+    file_list = os.listdir('../videos/')
+    print(' 총 {} 개의 파일이 존재합니다.'.format(len(file_list) - 1))
+    help_str = "진행할 파일의 순번을 입력하세요. : "
+
+    count = None
+    while True:
+        count = int(input(help_str))
+        if  count <= (len(file_list) - 1) :
+            break
+        else: 
+            help_str = '올바르지 않습니다. 진행할 파일의 순번을 입력하세요. : '
+
+    return file_list[count]
+    
 
 class FrameGenerator():
     _file_name = None
@@ -24,10 +26,8 @@ class FrameGenerator():
     _increase_width = 1
     duration = None
 
-
-    def __init__(self, name):
-        self._file_name = user_dict[name]
-        
+    def __init__(self, file_name):
+        self._file_name = file_name
         self._vidcap = cv2.VideoCapture('../videos/' + self._file_name)
         fps = self._vidcap.get(cv2.CAP_PROP_FPS) 
         
@@ -95,16 +95,9 @@ class FrameGenerator():
 
 
 if __name__ == '__main__':
-    help_str = "당신의 영어이름을 소문자로 입력하세요: "
-    name = None
-    while True:
-        name = input(help_str)
-        if  name in user_dict.keys():
-            break
-        else: 
-            help_str = '올바르지 않습니다. 당신의 영어이름을 소문자로 입력하세요: '
-    
-    fg = FrameGenerator(name)
+    file_name = select_file()
+
+    fg = FrameGenerator(file_name)
 
     help_str = "영상 내에서 시작할 시점(초)를 입력하세요 (새로 시작은 0을 입력): "
     while True:
@@ -116,4 +109,3 @@ if __name__ == '__main__':
             help_str = '올바르지 않습니다. 영상 내에서 시작할 시점(초)를 입력하세요: '
 
     fg.get_frames(second)
-
