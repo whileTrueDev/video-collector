@@ -1,6 +1,6 @@
 
-import sys
 import requests
+
 
 class TwitchBroad:
     __TWITCH_ACCESS_TOKEN = None
@@ -16,7 +16,6 @@ class TwitchBroad:
     def make_list_in_list(lst, length_limit):
         return [lst[i * length_limit: (i + 1) * length_limit]
                 for i in range((len(lst) + length_limit - 1) // length_limit)]
-
 
     def __init__(self, client_id, client_secret):
         self.__CLIENT_ID = client_id
@@ -55,9 +54,9 @@ class TwitchBroad:
 
             for request_streamers in list_in_list:
                 params = {
-                    'language': 'ko', 
+                    'language': 'ko',
                     'user_id': request_streamers,
-                    'game_id' : '21779'
+                    'game_id': '21779'
                 }
 
                 # request to the Twitch Api
@@ -84,4 +83,4 @@ class TwitchBroad:
                 data = res.json()
                 streamers_data.extend(data['data'])
 
-        return [ ('twitch', stream['user_login'], stream['id']) for stream in streamers_data ]
+        return [('twitch', stream['user_login'], stream['id']) for stream in streamers_data]
