@@ -2,35 +2,17 @@ import argparse
 import errno
 import logging
 import os
-import platform
-import signal
-import sys
 from collections import OrderedDict
 from contextlib import closing
-from distutils.version import StrictVersion
 from functools import partial
-from gettext import gettext
 from itertools import chain
-from time import sleep
 
-import requests
-import streamlink.logger as logger
-from socks import __version__ as socks_version
-from streamlink import NoPluginError, PluginError, StreamError, Streamlink
-from streamlink import __version__ as streamlink_version
-from streamlink.cache import Cache
-from streamlink.exceptions import FatalPluginError
-from streamlink.plugin import PluginOptions
-from streamlink.stream import StreamProcess
-from streamlink.utils import LazyFormatter, NamedPipe
-from streamlink_cli.argparser import build_parser
-from streamlink_cli.compat import is_win32, stdout
-from streamlink_cli.console import ConsoleOutput, ConsoleUserInputRequester
-from streamlink_cli.constants import (CONFIG_FILES, DEFAULT_STREAM_METADATA,
-                                      PLUGINS_DIR, STREAM_SYNONYMS)
+from streamlink import StreamError, Streamlink
+from streamlink_cli.compat import is_win32
+from streamlink_cli.console import ConsoleUserInputRequester
+from streamlink_cli.constants import STREAM_SYNONYMS
 from streamlink_cli.output import FileOutput, PlayerOutput
-from streamlink_cli.utils import HTTPServer, ignored, progress, stream_to_url
-from websocket import __version__ as websocket_version
+from streamlink_cli.utils import HTTPServer, progress
 
 ACCEPTABLE_ERRNO = (errno.EPIPE, errno.EINVAL, errno.ECONNRESET)
 try:
@@ -64,13 +46,14 @@ def create_output(plugin):
     """
     if arg_output:
         out = check_file_output(arg_output, False)
-    else :
+    else:
         title = arg_url
         log.info("Starting player: {0}".format(arg_player))
         print("Starting player: {0}".format(arg_player))
         out = PlayerOutput(arg_player)
 
     return out
+
 
 def open_stream(stream):
     """Opens a stream and reads 8192 bytes from it.
@@ -103,6 +86,8 @@ def open_stream(stream):
     return stream_fd, prebuffer
 
 # afreecatv stream
+
+
 def output_stream(plugin, stream):
     """Open stream, create output and finally write the stream to output."""
     global output
@@ -125,7 +110,7 @@ def output_stream(plugin, stream):
         else:
             console.exit("Failed to open output: {0} ({1})",
                          arg_output, err)
-    
+
     with closing(output):
         log.debug("Writing stream to output")
         read_stream(stream_fd, output, prebuffer)
@@ -138,7 +123,7 @@ def read_stream(stream, output, prebuffer, chunk_size=8192):
     is_player = isinstance(output, PlayerOutput)
     is_http = isinstance(output, HTTPServer)
     is_fifo = is_player and output.namedpipe
-   
+
     stream_iterator = chain(
         [prebuffer],
         iter(partial(stream.read, chunk_size), b"")
@@ -147,7 +132,7 @@ def read_stream(stream, output, prebuffer, chunk_size=8192):
     # if show_progress:
     if arg_output:
         stream_iterator = progress(stream_iterator,
-                                    prefix=os.path.basename(arg_output))
+                                   prefix=os.path.basename(arg_output))
 
     try:
         for data in stream_iterator:
@@ -257,39 +242,35 @@ def setup_plugin_options(session, plugin):
 def get_video(argments):
     platform, user_id, broad_no, lock, broad_list = argments
     global arg_url
-    global arg_player 
+    global arg_player
     global arg_output
     error_code = 0
-    
     url = None
     if platform == 'afreeca':
-        url = 'http://play.afreecatv.com/' +  user_id + '/' + broad_no
-        stream_name = 'hd'
-    else :
-        url = 'https://www.twitch.tv/' +  user_id 
-        stream_name = '720p60'
+        url = 'http://play.afreecatv.com/' + user_id + '/' + broad_no
+        stream_name = 'worst'
+    else:
+        url = 'https://www.twitch.tv/' + user_id
+        stream_name = 'audio_only'
 
-    file_name = './videos/video_{}_{}'.format(user_id, broad_no)      
+    file_name = './videos/video_{}_{}'.format(user_id, broad_no)
     arg_output = file_name
     arg_url = url
     arg_player = '/Applications/VLC.app/Contents/MacOS/VLC'
-
     try:
         setup_streamlink()
 
         # thread counts
         # streamlink.set_option("hls-segment-threads", 3)
 
-        # download -> file save 
+        # download -> file save
         # streamlink.set_option("hls-segment-stream-data", True)
 
         # playlist reload counts
         streamlink.set_option("hls-playlist-reload-attempts", 1)
-       
 
         # streamlink.set_option("hls-segment-timeout", args.hls_segment_timeout)
         streamlink.set_option("hls-timeout", 30)
-
 
         plugin = streamlink.resolve_url(arg_url)
         setup_plugin_options(streamlink, plugin)
@@ -312,7 +293,7 @@ def get_video(argments):
                 stream_fd.close()
             except KeyboardInterrupt:
                 error_code = 130
-                 # Close output
+                # Close output
                 if output:
                     output.close()
         ############ broad_list update section ############
